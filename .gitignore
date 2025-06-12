@@ -1,0 +1,23 @@
+# ------------------------------
+# Build and Distribution folders
+# ------------------------------
+build/
+build_web/
+dist/
+dist_web/
+
+# -----------------
+# Exported archives
+# -----------------
+*.zip
+
+# --------------
+# Hidden folders
+# --------------
+.cache/
+.DS_Store/
+
+# --------------
+# Auto-generated
+# --------------
+sources.cmake
