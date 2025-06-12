@@ -84,6 +84,8 @@ void GameRun(void) {
   }
 }
 
+void GetInput(void) {}
+
 void UpdateAll(float dt) {
   UpdateBG(dt);
   UpdateGround(dt);
