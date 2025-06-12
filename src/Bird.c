@@ -1,6 +1,6 @@
 #include "Bird.h"
-
-const char *const BIRD_IMG = "./assets/bird.png";
+#include "Assets_paths.h"
+#include "Settings.h"
 
 Bird *BirdInit(Vector2 screen) {
   static Bird newBird;
@@ -9,11 +9,15 @@ Bird *BirdInit(Vector2 screen) {
   newBird.birdHeight = newBird.birdImg.height;
   newBird.x = (screen.x - newBird.birdWidth) / 2;
   newBird.y = (screen.y - newBird.birdHeight) / 2;
+  newBird.dy = 0;
 
   return &newBird;
 }
 
-void BirdUpdate(Bird *bird, Vector2 screen) {}
+void BirdUpdate(Bird *bird, float dt) {
+  bird->dy += GRAVITY * dt;
+  bird->y += bird->dy;
+}
 
 void BirdDraw(Bird *bird) {
   DrawTexture(bird->birdImg, bird->x, bird->y, WHITE);
