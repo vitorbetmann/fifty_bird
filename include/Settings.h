@@ -13,6 +13,9 @@ extern const int TARGET_FPS;
 extern const int GRAVITY;
 extern const int JUMP_BURST;
 
+// Pipes
+extern const int PIPE_GAP;
+
 // Scenery
 extern const int BG_SCROLL_SPEED;
 extern const int GROUND_SCROLL_SPEED;

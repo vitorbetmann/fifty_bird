@@ -4,15 +4,30 @@
 #include "raylib.h"
 #include "stdlib.h"
 
-Texture2D PIPE_SPRITE;
+static Texture2D PIPE_SPRITE;
+static bool spriteLoaded = false;
 
-void PipeInit() { PIPE_SPRITE = LoadTexture(PIPE_IMG); }
+void PipeLoadSprite() {
+  if (!spriteLoaded) {
+    PIPE_SPRITE = LoadTexture(PIPE_IMG);
+    spriteLoaded = true;
+  }
+}
 
-Pipe *NewPipe(Vector2 screen) {
+Pipe *NewPipe(Vector2 screen, Orientation orientation) {
   Pipe *newPipe = malloc(sizeof(Pipe));
+  if (newPipe == NULL) {
+    return NULL;
+  }
+
+  if (!spriteLoaded) {
+    PipeLoadSprite();
+  }
+
   newPipe->sprite = PIPE_SPRITE;
-  newPipe->pos.x = screen.x;
-  newPipe->pos.y = GetRandomValue(screen.y / 4, screen.y - 10);
+  newPipe->orientation = orientation;
+  newPipe->pos.x = screen.x + 32;
+  newPipe->pos.y = GetRandomValue(screen.y / 4, screen.y - 90);
   newPipe->width = newPipe->sprite.width;
   newPipe->height = newPipe->sprite.height;
 
@@ -22,5 +37,14 @@ Pipe *NewPipe(Vector2 screen) {
 void PipeUpdate(Pipe *pipe, float dt) { pipe->pos.x -= PIPE_SCROLL_SPEED * dt; }
 
 void PipeDraw(Pipe *pipe) {
-  DrawTexture(pipe->sprite, pipe->pos.x, pipe->pos.y, WHITE);
+  if (pipe->orientation == TOP) {
+    Rectangle source = {0, 0, pipe->width, -pipe->height};
+    Rectangle dest = {pipe->pos.x, pipe->pos.y, pipe->width, pipe->height};
+
+    DrawTexturePro(pipe->sprite, source, dest, (Vector2){0, 0}, 0.0f, WHITE);
+  } else {
+    DrawTexture(pipe->sprite, pipe->pos.x, pipe->pos.y, WHITE);
+  }
 }
+
+void PipeUnloadSprite() { UnloadTexture(PIPE_SPRITE); }

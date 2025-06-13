@@ -8,7 +8,10 @@ const int TARGET_FPS = 30;
 
 // Bird
 const int GRAVITY = 20;
-const int JUMP_BURST = 5;
+const int JUMP_BURST = 8;
+
+// Pipes
+const int PIPE_GAP = 90;
 
 // Scenery
 const int BG_SCROLL_SPEED = 30;

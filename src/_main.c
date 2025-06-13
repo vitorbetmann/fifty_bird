@@ -3,7 +3,7 @@
 #include "Assets_paths.h"
 #include "Bird.h"
 #include "Pipe.h"
-#include "PipeManager.h"
+#include "PipePairManager.h"
 #include "Settings.h"
 #include <math.h>
 #include <raylib.h>
@@ -40,7 +40,7 @@ static RenderTexture2D vScreen;
 static Texture2D bgImg, groundImg;
 static Bird *bird;
 Pipe *testPipe;
-PipeQueue pipes;
+PipePairQueue pipes;
 // ----------
 
 // Let's have fun!
@@ -56,7 +56,7 @@ int main(void) {
 // --------------
 void GameInit(void) {
   // Window congfig
-  SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+  SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT | FLAG_WINDOW_HIGHDPI);
   InitWindow(window.x, window.y, "Fifty Bird");
   vScreen = LoadRenderTexture(V_SCREEN.x, V_SCREEN.y);
   SetTextureFilter(vScreen.texture, TEXTURE_FILTER_POINT);
@@ -65,11 +65,9 @@ void GameInit(void) {
   SetRandomSeed(time(NULL));
   // Load stuff
   LoadImages();
-  PipeInit();
+  PipePairManagerInit();
 
   bird = NewBird(V_SCREEN);
-  testPipe = NewPipe(V_SCREEN);
-  PipesEnqueue(testPipe, &pipes);
 }
 
 void LoadImages(void) {
@@ -115,7 +113,7 @@ void DrawOnVScreen(void) {
   BeginTextureMode(vScreen);
   ClearBackground(BLACK);
   DrawTexture(bgImg, bgScroll, 0, WHITE);
-  PipesDraw(&pipes);
+  PipePairsDraw(&pipes);
   DrawTexture(groundImg, groundScroll, V_SCREEN.y - groundImg.height, WHITE);
   BirdDraw(bird);
 
@@ -140,6 +138,7 @@ void GameUnload(void) { UnloadImages(); }
 void UnloadImages(void) {
   UnloadTexture(bgImg);
   UnloadTexture(groundImg);
-  PipesUnload(&pipes);
+  PipePairsUnload(&pipes);
+  PipeUnloadSprite();
 }
 // ----------------

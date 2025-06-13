@@ -4,20 +4,22 @@
 
 // Data types
 // ----------
+typedef enum { TOP, BOTTOM } Orientation;
+
 typedef struct {
   Texture2D sprite;
   int width, height;
+  Orientation orientation;
   Vector2 pos;
 } Pipe;
 
 // Prototypes
 // ----------
-void PipeInit(void);
-Pipe *NewPipe(Vector2 screen);
+void PipeLoadSprite(void);
+Pipe *NewPipe(Vector2 screen, Orientation orientation);
 void PipeUpdate(Pipe *pipe, float dt);
 void PipeDraw(Pipe *pipe);
+void PipeUnloadSprite();
+// ----------
 
-// Variables
-// ---------
-extern Texture2D PIPE_SPRITE;
 #endif
