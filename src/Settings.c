@@ -7,7 +7,7 @@ const int BG_LOOPING_POINT = 413, GROUND_LOOPING_POINT = V_SCREEN.x;
 const int TARGET_FPS = 30;
 
 // Bird
-const int GRAVITY = 0;
+const int GRAVITY = 20;
 const int JUMP_BURST = 5;
 
 // Scenery
