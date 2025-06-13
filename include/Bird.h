@@ -4,7 +4,7 @@
 // Data Types
 // ----------
 typedef struct {
-  Texture2D birdImg;
+  Texture2D birdSprite;
   int birdWidth, birdHeight;
   Vector2 pos;
   float dy, rotation;
@@ -13,7 +13,7 @@ typedef struct {
 // ----------
 // Prototypes
 // ----------
-Bird *BirdInit(Vector2 screen);
+Bird *NewBird(Vector2 screen);
 void BirdUpdate(Bird *bird, float dt);
 bool canJump(void);
 void BirdDraw(Bird *bird);

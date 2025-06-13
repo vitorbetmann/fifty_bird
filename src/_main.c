@@ -2,8 +2,13 @@
 // --------
 #include "Assets_paths.h"
 #include "Bird.h"
+#include "Pipe.h"
+#include "PipeManager.h"
+#include "Settings.h"
 #include <math.h>
 #include <raylib.h>
+#include <stdio.h>
+#include <time.h>
 // --------
 
 // Prototypes
@@ -30,17 +35,12 @@ void UnloadImages(void);
 
 // Varaiables
 // ----------
-Vector2 window = {1280, 720};
-const Vector2 V_SCREEN = {512, 288};
-
-const int BG_SCROLL_SPEED = 30, GROUND_SCROLL_SPEED = 60;
-const int BG_LOOPING_POINT = 413, GROUND_LOOPING_POINT = V_SCREEN.x;
-
 float bgScroll = 0, groundScroll = 0;
-
-RenderTexture2D vScreen;
-Texture2D bgImg, groundImg;
-Bird *bird;
+static RenderTexture2D vScreen;
+static Texture2D bgImg, groundImg;
+static Bird *bird;
+Pipe *testPipe;
+PipeQueue pipes;
 // ----------
 
 // Let's have fun!
@@ -56,15 +56,20 @@ int main(void) {
 // --------------
 void GameInit(void) {
   // Window congfig
-  SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_RESIZABLE);
+  SetConfigFlags(FLAG_WINDOW_RESIZABLE);
   InitWindow(window.x, window.y, "Fifty Bird");
   vScreen = LoadRenderTexture(V_SCREEN.x, V_SCREEN.y);
-  // SetTextureFilter(font.texture, TEXTURE_FILTER_POINT);
+  SetTextureFilter(vScreen.texture, TEXTURE_FILTER_POINT);
+  SetTargetFPS(TARGET_FPS);
 
+  SetRandomSeed(time(NULL));
   // Load stuff
   LoadImages();
+  PipeInit();
 
-  bird = BirdInit(V_SCREEN);
+  bird = NewBird(V_SCREEN);
+  testPipe = NewPipe(V_SCREEN);
+  PipesEnqueue(testPipe, &pipes);
 }
 
 void LoadImages(void) {
@@ -84,11 +89,10 @@ void GameRun(void) {
   }
 }
 
-void GetInput(void) {}
-
 void UpdateAll(float dt) {
   UpdateBG(dt);
   UpdateGround(dt);
+  PipesUpdate(&pipes, dt, V_SCREEN);
   BirdUpdate(bird, dt);
 }
 
@@ -111,8 +115,12 @@ void DrawOnVScreen(void) {
   BeginTextureMode(vScreen);
   ClearBackground(BLACK);
   DrawTexture(bgImg, bgScroll, 0, WHITE);
+  PipesDraw(&pipes);
   DrawTexture(groundImg, groundScroll, V_SCREEN.y - groundImg.height, WHITE);
   BirdDraw(bird);
+
+  DrawFPS(10, 10);
+
   EndTextureMode();
 }
 
@@ -132,5 +140,6 @@ void GameUnload(void) { UnloadImages(); }
 void UnloadImages(void) {
   UnloadTexture(bgImg);
   UnloadTexture(groundImg);
+  PipesUnload(&pipes);
 }
 // ----------------

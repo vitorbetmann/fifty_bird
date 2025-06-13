@@ -3,11 +3,11 @@
 #include "Settings.h"
 #include "raylib.h"
 
-Bird *BirdInit(Vector2 screen) {
+Bird *NewBird(Vector2 screen) {
   static Bird newBird = {0};
-  newBird.birdImg = LoadTexture(BIRD_IMG);
-  newBird.birdWidth = newBird.birdImg.width;
-  newBird.birdHeight = newBird.birdImg.height;
+  newBird.birdSprite = LoadTexture(BIRD_IMG);
+  newBird.birdWidth = newBird.birdSprite.width;
+  newBird.birdHeight = newBird.birdSprite.height;
   newBird.pos.x = (screen.x - newBird.birdWidth) / 2;
   newBird.pos.y = (screen.y - newBird.birdHeight) / 2;
 
@@ -27,5 +27,5 @@ void BirdUpdate(Bird *bird, float dt) {
 bool canJump(void) { return IsKeyPressed(KEY_SPACE); }
 
 void BirdDraw(Bird *bird) {
-  DrawTextureEx(bird->birdImg, bird->pos, bird->rotation, 1.0f, WHITE);
+  DrawTextureEx(bird->birdSprite, bird->pos, bird->rotation, 1.0f, WHITE);
 }
