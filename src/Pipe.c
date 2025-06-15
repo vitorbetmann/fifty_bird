@@ -14,7 +14,7 @@ void PipeLoadSprite() {
   }
 }
 
-Pipe *NewPipe(Vector2 screen, Orientation orientation) {
+Pipe *NewPipe(Vector2 pos, Orientation orientation) {
   Pipe *newPipe = malloc(sizeof(Pipe));
   if (newPipe == NULL) {
     return NULL;
@@ -26,8 +26,8 @@ Pipe *NewPipe(Vector2 screen, Orientation orientation) {
 
   newPipe->sprite = PIPE_SPRITE;
   newPipe->orientation = orientation;
-  newPipe->pos.x = screen.x + 32;
-  newPipe->pos.y = GetRandomValue(screen.y / 4, screen.y - 90);
+  newPipe->pos.x = pos.x;
+  newPipe->pos.y = pos.y;
   newPipe->width = newPipe->sprite.width;
   newPipe->height = newPipe->sprite.height;
 

@@ -12,8 +12,12 @@ const int JUMP_BURST = 8;
 
 // Pipes
 const int PIPE_GAP = 90;
+const int PIPE_TOP_MARGIN = 30;
+const int PIPE_BOTTOM_MARGIN = 45;
+const int PIPE_SHIFT = 20;
+const int SPAWN_TIME = 2;
 
 // Scenery
-const int BG_SCROLL_SPEED = 30;
-const int GROUND_SCROLL_SPEED = 60;
-const int PIPE_SCROLL_SPEED = GROUND_SCROLL_SPEED;
+const float BG_SCROLL_SPEED = 30.0f;
+const float GROUND_SCROLL_SPEED = 60.0f;
+const float PIPE_SCROLL_SPEED = GROUND_SCROLL_SPEED;

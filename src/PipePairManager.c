@@ -1,13 +1,17 @@
 #include "PipePairManager.h"
 #include "PipePair.h"
+#include "Settings.h"
 #include "raylib.h"
+#include "raymath.h"
 #include "stdlib.h"
 
 static float spawnTimer;
+float lastGapY;
 
 void PipePairManagerInit(void) {
   spawnTimer = 0.0f;
-  PipePairInit();
+  lastGapY = GetRandomValue(PIPE_TOP_MARGIN,
+                            V_SCREEN.y - PIPE_GAP - PIPE_BOTTOM_MARGIN);
 }
 
 void PipesEnqueue(PipePair *pipePair, PipePairQueue *pipePairs) {
@@ -44,7 +48,9 @@ void PipesDequeue(PipePairQueue *pipes) {
 void PipesUpdate(PipePairQueue *pipePairs, float dt, Vector2 screen) {
 
   if (CanGeneratePipePair(dt)) {
-    PipesEnqueue(NewPipePair(screen), pipePairs);
+    UpdateLastGapY();
+    PipePair *newPipePair = NewPipePair((Vector2){screen.x + 32, lastGapY});
+    PipesEnqueue(newPipePair, pipePairs);
   }
 
   PipePairNode *curr = pipePairs->head;
@@ -60,11 +66,17 @@ void PipesUpdate(PipePairQueue *pipePairs, float dt, Vector2 screen) {
 
 bool CanGeneratePipePair(float dt) {
   spawnTimer += dt;
-  if (spawnTimer > 2) {
+  if (spawnTimer > SPAWN_TIME) {
     spawnTimer = 0.0f;
     return true;
   }
   return false;
+}
+
+void UpdateLastGapY(void) {
+  lastGapY += GetRandomValue(-PIPE_SHIFT, PIPE_SHIFT);
+  lastGapY = Clamp(lastGapY, PIPE_TOP_MARGIN,
+                   V_SCREEN.y - PIPE_GAP - PIPE_BOTTOM_MARGIN);
 }
 
 void PipePairsDraw(PipePairQueue *pipes) {

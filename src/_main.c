@@ -39,8 +39,7 @@ float bgScroll = 0, groundScroll = 0;
 static RenderTexture2D vScreen;
 static Texture2D bgImg, groundImg;
 static Bird *bird;
-Pipe *testPipe;
-PipePairQueue pipes;
+static PipePairQueue pipes;
 // ----------
 
 // Let's have fun!
@@ -59,7 +58,6 @@ void GameInit(void) {
   SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT | FLAG_WINDOW_HIGHDPI);
   InitWindow(window.x, window.y, "Fifty Bird");
   vScreen = LoadRenderTexture(V_SCREEN.x, V_SCREEN.y);
-  SetTextureFilter(vScreen.texture, TEXTURE_FILTER_POINT);
   SetTargetFPS(TARGET_FPS);
 
   SetRandomSeed(time(NULL));
@@ -81,7 +79,6 @@ void LoadImages(void) {
 void GameRun(void) {
   while (!WindowShouldClose()) {
     float dt = GetFrameTime();
-    // Input
     UpdateAll(dt);
     DrawAll();
   }

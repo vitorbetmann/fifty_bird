@@ -15,10 +15,14 @@ extern const int JUMP_BURST;
 
 // Pipes
 extern const int PIPE_GAP;
+extern const int PIPE_TOP_MARGIN;
+extern const int PIPE_BOTTOM_MARGIN;
+extern const int PIPE_SHIFT;
+extern const int SPAWN_TIME;
 
 // Scenery
-extern const int BG_SCROLL_SPEED;
-extern const int GROUND_SCROLL_SPEED;
-extern const int PIPE_SCROLL_SPEED;
+extern const float BG_SCROLL_SPEED;
+extern const float GROUND_SCROLL_SPEED;
+extern const float PIPE_SCROLL_SPEED;
 
 #endif

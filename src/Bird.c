@@ -1,3 +1,5 @@
+// TODO add rotation to Bird
+
 #include "Bird.h"
 #include "Assets_paths.h"
 #include "Settings.h"

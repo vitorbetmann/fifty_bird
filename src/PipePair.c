@@ -1,17 +1,17 @@
 #include "PipePair.h"
 #include "Pipe.h"
+#include "Settings.h"
 #include "raylib.h"
 #include <stdlib.h>
 
-float lastY;
-static const int PIPE_HEIGHT = 288;
+int PIPE_HEIGHT = 288;
 
-void PipePairInit() { lastY = -PIPE_HEIGHT + GetRandomValue(0, 80) + 20; }
-
-PipePair *NewPipePair(Vector2 screen) {
+PipePair *NewPipePair(Vector2 gapPos) {
   PipePair *newPipePair = malloc(sizeof(PipePair));
-  newPipePair->top = NewPipe(screen, TOP);
-  newPipePair->bottom = NewPipe(screen, BOTTOM);
+  newPipePair->top = NewPipe((Vector2){gapPos.x, gapPos.y - PIPE_HEIGHT}, TOP);
+  newPipePair->bottom = NewPipe(
+      (Vector2){gapPos.x, newPipePair->top->pos.y + PIPE_HEIGHT + PIPE_GAP},
+      BOTTOM);
   newPipePair->width = &newPipePair->bottom->width;
   newPipePair->pos = &newPipePair->bottom->pos;
 
