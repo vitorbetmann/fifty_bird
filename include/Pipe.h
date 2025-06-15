@@ -11,11 +11,11 @@ typedef struct {
   int width, height;
   Orientation orientation;
   Vector2 pos;
+  Rectangle hitBox;
 } Pipe;
 
 // Prototypes
 // ----------
-void PipeLoadSprite(void);
 Pipe *NewPipe(Vector2 screen, Orientation orientation);
 void PipeUpdate(Pipe *pipe, float dt);
 void PipeDraw(Pipe *pipe);

@@ -19,14 +19,9 @@ typedef struct {
 // Prototypes
 // ----------
 void PipePairManagerInit(void);
-void PipesEnqueue(PipePair *pipePair, PipePairQueue *pipePairs);
-void PipesDequeue(PipePairQueue *pipePairs);
-void PipesUpdate(PipePairQueue *pipePairs, float dt, Vector2 screen);
-bool CanGeneratePipePair(float dt);
-void UpdateLastGapY(void);
+void PipePairsUpdate(PipePairQueue *pipePairs, float dt, Vector2 screen);
 void PipePairsDraw(PipePairQueue *pipePairs);
 void PipePairsUnload(PipePairQueue *pipePairs);
-void PipePairsUnloadNode(PipePairNode *pipePairNode);
 // ----------
 
 #endif

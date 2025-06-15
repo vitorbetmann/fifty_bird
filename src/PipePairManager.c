@@ -5,8 +5,20 @@
 #include "raymath.h"
 #include "stdlib.h"
 
+// Prototypes
+// ----------
+static void PipesEnqueue(PipePair *pipePair, PipePairQueue *pipePairs);
+static void PipesDequeue(PipePairQueue *pipePairs);
+static bool CanGeneratePipePair(float dt);
+static void UpdateLastGapY(void);
+static void PipePairsUnloadNode(PipePairNode *pipePairNode);
+// ----------
+
+// Variables
+// ---------
 static float spawnTimer;
-float lastGapY;
+static float lastGapY;
+// ---------
 
 void PipePairManagerInit(void) {
   spawnTimer = 0.0f;
@@ -14,7 +26,7 @@ void PipePairManagerInit(void) {
                             V_SCREEN.y - PIPE_GAP - PIPE_BOTTOM_MARGIN);
 }
 
-void PipesEnqueue(PipePair *pipePair, PipePairQueue *pipePairs) {
+static void PipesEnqueue(PipePair *pipePair, PipePairQueue *pipePairs) {
   PipePairNode *newNode = malloc(sizeof(PipePairNode));
   if (newNode == NULL) {
     return;
@@ -31,7 +43,7 @@ void PipesEnqueue(PipePair *pipePair, PipePairQueue *pipePairs) {
   }
 }
 
-void PipesDequeue(PipePairQueue *pipes) {
+static void PipesDequeue(PipePairQueue *pipes) {
   if (pipes->head == NULL) {
     return;
   }
@@ -45,7 +57,7 @@ void PipesDequeue(PipePairQueue *pipes) {
   PipePairsUnloadNode(temp);
 }
 
-void PipesUpdate(PipePairQueue *pipePairs, float dt, Vector2 screen) {
+void PipePairsUpdate(PipePairQueue *pipePairs, float dt, Vector2 screen) {
 
   if (CanGeneratePipePair(dt)) {
     UpdateLastGapY();
@@ -57,14 +69,14 @@ void PipesUpdate(PipePairQueue *pipePairs, float dt, Vector2 screen) {
   while (curr != NULL) {
     PipePairUpdate(curr->pipePair, dt);
     PipePairNode *next = curr->next;
-    if (curr->pipePair->pos->x < -(*curr->pipePair->width)) {
+    if (curr->pipePair->pos->x < -curr->pipePair->width) {
       PipesDequeue(pipePairs);
     }
     curr = next;
   }
 }
 
-bool CanGeneratePipePair(float dt) {
+static bool CanGeneratePipePair(float dt) {
   spawnTimer += dt;
   if (spawnTimer > SPAWN_TIME) {
     spawnTimer = 0.0f;
@@ -73,7 +85,7 @@ bool CanGeneratePipePair(float dt) {
   return false;
 }
 
-void UpdateLastGapY(void) {
+static void UpdateLastGapY(void) {
   lastGapY += GetRandomValue(-PIPE_SHIFT, PIPE_SHIFT);
   lastGapY = Clamp(lastGapY, PIPE_TOP_MARGIN,
                    V_SCREEN.y - PIPE_GAP - PIPE_BOTTOM_MARGIN);
@@ -98,7 +110,7 @@ void PipePairsUnload(PipePairQueue *pipes) {
   pipes->head = pipes->tail = NULL;
 }
 
-void PipePairsUnloadNode(PipePairNode *pipePairNode) {
+static void PipePairsUnloadNode(PipePairNode *pipePairNode) {
   PipePairUnload(pipePairNode->pipePair);
   free(pipePairNode);
 }

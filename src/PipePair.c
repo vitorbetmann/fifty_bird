@@ -4,7 +4,7 @@
 #include "raylib.h"
 #include <stdlib.h>
 
-int PIPE_HEIGHT = 288;
+const int PIPE_HEIGHT = 288;
 
 PipePair *NewPipePair(Vector2 gapPos) {
   PipePair *newPipePair = malloc(sizeof(PipePair));
@@ -12,7 +12,7 @@ PipePair *NewPipePair(Vector2 gapPos) {
   newPipePair->bottom = NewPipe(
       (Vector2){gapPos.x, newPipePair->top->pos.y + PIPE_HEIGHT + PIPE_GAP},
       BOTTOM);
-  newPipePair->width = &newPipePair->bottom->width;
+  newPipePair->width = newPipePair->bottom->width;
   newPipePair->pos = &newPipePair->bottom->pos;
 
   return newPipePair;

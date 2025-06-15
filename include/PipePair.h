@@ -9,13 +9,12 @@
 typedef struct {
   Pipe *top;
   Pipe *bottom;
-  int *width;
+  int width;
   Vector2 *pos;
 } PipePair;
 
 // Prototypes
 // ----------
-void PipePairInit(void);
 PipePair *NewPipePair(Vector2 screen);
 void PipePairUpdate(PipePair *pipePair, float dt);
 void PipePairDraw(PipePair *pipePair);

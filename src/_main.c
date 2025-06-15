@@ -21,8 +21,11 @@ void LoadImages(void);
 void GameRun(void);
 
 void UpdateAll(float dt);
-void UpdateBG(float dt);
-void UpdateGround(float dt);
+void BGUpdate(float dt);
+void GroundUpdate(float dt);
+
+bool hasCollided(Bird *bird, PipePairNode *currentPipePairNode);
+void CurrPipePairNodeUpdate(void);
 
 void DrawAll(void);
 void DrawOnVScreen(void);
@@ -40,6 +43,7 @@ static RenderTexture2D vScreen;
 static Texture2D bgImg, groundImg;
 static Bird *bird;
 static PipePairQueue pipes;
+static PipePairNode *currPipePairNode;
 // ----------
 
 // Let's have fun!
@@ -61,6 +65,7 @@ void GameInit(void) {
   SetTargetFPS(TARGET_FPS);
 
   SetRandomSeed(time(NULL));
+
   // Load stuff
   LoadImages();
   PipePairManagerInit();
@@ -76,6 +81,7 @@ void LoadImages(void) {
 
 // Run functions
 // -------------
+bool canPause = false;
 void GameRun(void) {
   while (!WindowShouldClose()) {
     float dt = GetFrameTime();
@@ -85,20 +91,52 @@ void GameRun(void) {
 }
 
 void UpdateAll(float dt) {
-  UpdateBG(dt);
-  UpdateGround(dt);
-  PipesUpdate(&pipes, dt, V_SCREEN);
-  BirdUpdate(bird, dt);
+  if (!canPause) {
+    BGUpdate(dt);
+    GroundUpdate(dt);
+    PipePairsUpdate(&pipes, dt, V_SCREEN);
+    BirdUpdate(bird, dt);
+    CurrPipePairNodeUpdate();
+
+    if (hasCollided(bird, currPipePairNode)) {
+      canPause = true;
+    }
+  }
 }
 
-void UpdateBG(float dt) {
+void BGUpdate(float dt) {
   bgScroll -= BG_SCROLL_SPEED * dt;
   bgScroll = fmodf(bgScroll, BG_LOOPING_POINT);
 }
 
-void UpdateGround(float dt) {
+void GroundUpdate(float dt) {
   groundScroll -= GROUND_SCROLL_SPEED * dt;
   groundScroll = fmodf(groundScroll, GROUND_SCROLL_SPEED);
+}
+
+void CurrPipePairNodeUpdate(void) {
+  if (currPipePairNode == NULL) {
+    currPipePairNode = pipes.head;
+    return;
+  }
+
+  float currPipePairPos = currPipePairNode->pipePair->pos->x;
+  int currPipePairWidth = currPipePairNode->pipePair->width;
+  if (bird->pos.x > currPipePairPos + currPipePairWidth) {
+    currPipePairNode = currPipePairNode->next;
+  }
+}
+
+bool hasCollided(Bird *bird, PipePairNode *currentPipePairNode) {
+  if (currentPipePairNode == NULL) {
+    return false;
+  }
+
+  Rectangle bottomPipeHitBox = currentPipePairNode->pipePair->bottom->hitBox;
+  Rectangle topPipeHitBox = currentPipePairNode->pipePair->top->hitBox;
+
+  return CheckCollisionRecs(bird->hitBox, bottomPipeHitBox) ||
+         CheckCollisionRecs(bird->hitBox, topPipeHitBox);
 }
 
 void DrawAll(void) {

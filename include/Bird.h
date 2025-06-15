@@ -5,9 +5,10 @@
 // ----------
 typedef struct {
   Texture2D birdSprite;
-  int birdWidth, birdHeight;
+  int width, height;
   Vector2 pos;
   float dy, rotation;
+  Rectangle hitBox;
 } Bird;
 
 // ----------
@@ -15,5 +16,4 @@ typedef struct {
 // ----------
 Bird *NewBird(Vector2 screen);
 void BirdUpdate(Bird *bird, float dt);
-bool canJump(void);
 void BirdDraw(Bird *bird);

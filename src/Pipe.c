@@ -4,10 +4,18 @@
 #include "raylib.h"
 #include "stdlib.h"
 
+// Prototypes
+// ----------
+static void PipeLoadSprite(void);
+// ----------
+
+// Variables
+// ---------
 static Texture2D PIPE_SPRITE;
 static bool spriteLoaded = false;
+// ---------
 
-void PipeLoadSprite() {
+static void PipeLoadSprite() {
   if (!spriteLoaded) {
     PIPE_SPRITE = LoadTexture(PIPE_IMG);
     spriteLoaded = true;
@@ -25,16 +33,26 @@ Pipe *NewPipe(Vector2 pos, Orientation orientation) {
   }
 
   newPipe->sprite = PIPE_SPRITE;
+
   newPipe->orientation = orientation;
+
   newPipe->pos.x = pos.x;
   newPipe->pos.y = pos.y;
+
   newPipe->width = newPipe->sprite.width;
   newPipe->height = newPipe->sprite.height;
+
+  newPipe->hitBox.width = newPipe->width;
+  newPipe->hitBox.height = newPipe->height;
 
   return newPipe;
 }
 
-void PipeUpdate(Pipe *pipe, float dt) { pipe->pos.x -= PIPE_SCROLL_SPEED * dt; }
+void PipeUpdate(Pipe *pipe, float dt) {
+  pipe->pos.x -= PIPE_SCROLL_SPEED * dt;
+  pipe->hitBox.x = pipe->pos.x;
+  pipe->hitBox.y = pipe->pos.y;
+}
 
 void PipeDraw(Pipe *pipe) {
   if (pipe->orientation == TOP) {

@@ -12,6 +12,7 @@ extern const int TARGET_FPS;
 // Bird
 extern const int GRAVITY;
 extern const int JUMP_BURST;
+extern const int HITBOX_LEEWAY;
 
 // Pipes
 extern const int PIPE_GAP;
