@@ -18,6 +18,16 @@ extern const int MEDIUM_FONT_SIZE;
 extern const int HUGE_FONT_SIZE;
 extern const int FLAPPY_FONT_SIZE;
 
+// Music
+extern Music music;
+
+// Sounds
+extern Sound explosionSound, hurtSound, jumpSound, scoreSound;
+
+// Controls
+extern bool (*HasValidInput)(int value);
+extern int input1, input2;
+
 // Bird
 extern const int GRAVITY;
 extern const int JUMP_BURST;

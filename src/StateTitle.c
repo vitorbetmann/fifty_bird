@@ -8,7 +8,7 @@
 
 // Variables
 // ---------
-const char *const PROMPT = "Press Enter";
+static const char PROMPT[] = "Press Enter";
 static Bird *bird;
 // ---------
 

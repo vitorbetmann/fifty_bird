@@ -21,7 +21,6 @@ static PipePairNode *currPipePairNode;
 void StatePlayEnter(Bird *player) {
   PipePairManagerInit();
   bird = player;
-  BirdReset(bird);
 }
 
 void StatePlayUpdate(float dt) {
@@ -33,6 +32,15 @@ void StatePlayUpdate(float dt) {
     if (HasCollided(bird, currPipePairNode->pipePair)) {
       bird->isAlive = false;
     }
+  }
+
+  if (bird->pos.y + bird->hitBox.height > V_SCREEN.y - 16) {
+    bird->isAlive = false;
+  }
+
+  if (!bird->isAlive) {
+    PlaySound(explosionSound);
+    PlaySound(hurtSound);
   }
 }
 
@@ -46,6 +54,7 @@ void CurrPipePairNodeUpdate(void) {
   int currPipePairWidth = currPipePairNode->pipePair->width;
   if (bird->pos.x > currPipePairPos + currPipePairWidth) {
     bird->score++;
+    PlaySound(scoreSound);
     currPipePairNode = currPipePairNode->next;
   }
 }

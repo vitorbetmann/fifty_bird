@@ -3,6 +3,7 @@
 #include "Assets_paths.h"
 #include "Pipe.h"
 #include "Settings.h"
+#include "states/StateCountdown.h"
 #include "states/StatePlay.h"
 #include "states/StateScore.h"
 #include "states/StateTitle.h"
@@ -26,6 +27,8 @@ typedef enum {
 void GameInit(void);
 void LoadImages(void);
 void LoadFonts(void);
+void LoadMusic(void);
+void LoadSounds(void);
 
 // Run functions
 void GameRun(void);
@@ -45,7 +48,7 @@ void DrawOnWindow(void);
 void GameUnload(void);
 void UnloadImages(void);
 void UnloadFonts(void);
-void UnloadSounds(void);
+void UnloadMusicAndSounds(void);
 // ----------
 
 // Varaiables
@@ -61,7 +64,12 @@ static void (*CurrStateUpdate)(float dt);
 static void (*CurrStateDraw)();
 static void (*CurrStateExit)();
 
+bool (*HasValidInput)(int value);
+int input1, input2;
+
 Font smallFont, mediumFont, flappyFont, hugeFont;
+Music music;
+Sound explosionSound, hurtSound, jumpSound, scoreSound;
 // ----------
 
 // Let's have fun!
@@ -82,16 +90,31 @@ void GameInit(void) {
   vScreen = LoadRenderTexture(V_SCREEN.x, V_SCREEN.y);
   SetTargetFPS(TARGET_FPS);
 
-  SetRandomSeed(time(NULL));
+  // Sound Config
+  InitAudioDevice();
 
   // Load stuff
   LoadImages();
   LoadFonts();
+  LoadMusic();
+  LoadSounds();
 
+  // Game specifics
+  PlayMusicStream(music);
+  SetRandomSeed(time(NULL));
   bird = NewBird(V_SCREEN);
 
   // Let us begin
   ChangeCurrState(TITLE);
+
+  // Pick input type
+  HasValidInput = IsKeyPressed;
+  input1 = KEY_SPACE;
+  input2 = KEY_ENTER;
+
+  // HasValidInput = IsMouseButtonPressed;
+  // input1 = MOUSE_LEFT_BUTTON;
+  // input2 = MOUSE_BUTTON_RIGHT;
 }
 
 void LoadImages(void) {
@@ -108,6 +131,15 @@ void LoadFonts(void) {
   SetTextureFilter(hugeFont.texture, TEXTURE_FILTER_POINT);
   SetTextureFilter(flappyFont.texture, TEXTURE_FILTER_POINT);
 }
+
+void LoadMusic(void) { music = LoadMusicStream(MUSIC); }
+
+void LoadSounds(void) {
+  explosionSound = LoadSound(EXPLOSION_SOUND);
+  hurtSound = LoadSound(HURT_SOUND);
+  jumpSound = LoadSound(JUMP_SOUND);
+  scoreSound = LoadSound(SCORE_SOUND);
+}
 // --------------
 
 // Run functions
@@ -121,14 +153,17 @@ void GameRun(void) {
   }
 }
 
-void CheckGameState() {
+void CheckGameState(void) {
   switch (currGameState) {
   case TITLE:
-    if (IsKeyPressed(KEY_ENTER)) {
-      ChangeCurrState(PLAY);
+    if (HasValidInput(input2)) {
+      ChangeCurrState(COUNTDOWN);
     }
     break;
   case COUNTDOWN:
+    if (IsTimerOver()) {
+      ChangeCurrState(PLAY);
+    }
     break;
   case PLAY:
     if (!bird->isAlive) {
@@ -136,8 +171,8 @@ void CheckGameState() {
     }
     break;
   case SCORE:
-    if (IsKeyPressed(KEY_ENTER)) {
-      ChangeCurrState(PLAY);
+    if (HasValidInput(input2)) {
+      ChangeCurrState(COUNTDOWN);
     }
     break;
   default:
@@ -157,6 +192,14 @@ void ChangeCurrState(GameState state) {
     CurrStateExit = StateTitleExit;
     break;
   case COUNTDOWN:
+    CurrStateExit();
+    currGameState = COUNTDOWN;
+
+    StateCountdownEnter(bird);
+
+    CurrStateDraw = StateCountdownDraw;
+    CurrStateUpdate = StateCountdownUpdate;
+    CurrStateExit = StateCountdownExit;
     break;
   case PLAY:
     CurrStateExit();
@@ -187,6 +230,7 @@ void UpdateAll(float dt) {
   BGUpdate(dt);
   CurrStateUpdate(dt);
   GroundUpdate(dt);
+  UpdateMusicStream(music);
 }
 
 void BGUpdate(float dt) {
@@ -227,7 +271,7 @@ void DrawOnWindow(void) {
 void GameUnload(void) {
   UnloadImages();
   UnloadFonts();
-  UnloadSounds();
+  UnloadMusicAndSounds();
 }
 
 void UnloadImages(void) {
@@ -242,5 +286,12 @@ void UnloadFonts(void) {
   UnloadFont(flappyFont);
 }
 
-void UnloadSounds(void) {}
+void UnloadMusicAndSounds(void) {
+  UnloadMusicStream(music);
+  UnloadSound(explosionSound);
+  UnloadSound(hurtSound);
+  UnloadSound(jumpSound);
+  UnloadSound(scoreSound);
+  CloseAudioDevice();
+}
 // ----------------

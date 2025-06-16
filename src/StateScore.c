@@ -4,13 +4,14 @@
 
 #include "Settings.h"
 #include "string.h"
+#include <stdint.h>
 #include <stdio.h>
 
 // Variables
 // ---------
-static const char *const GAME_OVER_MSG = "Oof! You lost!";
-static const char *const PLAY_AGAIN_MSG = "Press Enter to Play Again";
-static const char *const SCORE_TXT = "Score: ";
+static const char GAME_OVER_MSG[] = "Oof! You lost!";
+static const char PLAY_AGAIN_MSG[] = "Press Enter to Play Again";
+static const char SCORE_MSG[] = "Score: ";
 static int score;
 // ---------
 
@@ -26,8 +27,8 @@ void StateScoreDraw(void) {
   DrawTextEx(flappyFont, GAME_OVER_MSG, (Vector2){textX, 64}, FLAPPY_FONT_SIZE,
              1, WHITE);
 
-  char buffer[32];
-  snprintf(buffer, sizeof(buffer), "Score: %d", score);
+  char buffer[sizeof(SCORE_MSG) + sizeof(uint32_t)];
+  snprintf(buffer, sizeof(buffer), "%s%d", SCORE_MSG, score);
   textWidth = MeasureText(buffer, MEDIUM_FONT_SIZE);
   textX = (V_SCREEN.x - textWidth) / 2.0;
   DrawTextEx(mediumFont, buffer, (Vector2){textX, 100}, MEDIUM_FONT_SIZE, 1,

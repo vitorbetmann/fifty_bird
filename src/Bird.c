@@ -39,23 +39,20 @@ void BirdUpdate(Bird *bird, float dt) {
 
   if (canJump(bird->isAlive)) {
     bird->dy -= JUMP_BURST;
+    PlaySound(jumpSound);
   }
 
   bird->pos.y += bird->dy;
 
   bird->hitBox.x = bird->pos.x + HITBOX_LEEWAY;
   bird->hitBox.y = bird->pos.y + HITBOX_LEEWAY;
-
-  if (bird->pos.y + bird->hitBox.height > V_SCREEN.y - 16) {
-    bird->isAlive = false;
-  }
 }
 
 static bool canJump(bool isAlive) {
   if (!isAlive) {
     return false;
   }
-  return IsKeyPressed(KEY_SPACE);
+  return HasValidInput(input1);
 }
 
 void BirdDraw(Bird *bird) {
