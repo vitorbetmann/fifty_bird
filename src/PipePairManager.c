@@ -17,12 +17,12 @@ static void PipePairsUnloadNode(PipePairNode *pipePairNode);
 // Variables
 // ---------
 static float spawnTimer;
-static float lastGapY;
+static float gapLastY;
 // ---------
 
 void PipePairManagerInit(void) {
   spawnTimer = 0.0f;
-  lastGapY = GetRandomValue(PIPE_TOP_MARGIN,
+  gapLastY = GetRandomValue(PIPE_TOP_MARGIN,
                             V_SCREEN.y - PIPE_GAP - PIPE_BOTTOM_MARGIN);
 }
 
@@ -61,7 +61,7 @@ void PipePairsUpdate(PipePairQueue *pipePairs, float dt, Vector2 screen) {
 
   if (CanGeneratePipePair(dt)) {
     UpdateLastGapY();
-    PipePair *newPipePair = NewPipePair((Vector2){screen.x + 32, lastGapY});
+    PipePair *newPipePair = NewPipePair((Vector2){screen.x + 32, gapLastY});
     PipesEnqueue(newPipePair, pipePairs);
   }
 
@@ -86,8 +86,8 @@ static bool CanGeneratePipePair(float dt) {
 }
 
 static void UpdateLastGapY(void) {
-  lastGapY += GetRandomValue(-PIPE_SHIFT, PIPE_SHIFT);
-  lastGapY = Clamp(lastGapY, PIPE_TOP_MARGIN,
+  gapLastY += GetRandomValue(-PIPE_SHIFT, PIPE_SHIFT);
+  gapLastY = Clamp(gapLastY, PIPE_TOP_MARGIN,
                    V_SCREEN.y - PIPE_GAP - PIPE_BOTTOM_MARGIN);
 }
 

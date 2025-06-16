@@ -1,4 +1,10 @@
+#ifndef BIRD_H
+#define BIRD_H
+
+// Includes
+// --------
 #include "raylib.h"
+// --------
 
 // ----------
 // Data Types
@@ -9,11 +15,15 @@ typedef struct {
   Vector2 pos;
   float dy, rotation;
   Rectangle hitBox;
+  bool isAlive;
 } Bird;
 
 // ----------
 // Prototypes
 // ----------
 Bird *NewBird(Vector2 screen);
+void BirdReset(Bird *bird);
 void BirdUpdate(Bird *bird, float dt);
 void BirdDraw(Bird *bird);
+
+#endif

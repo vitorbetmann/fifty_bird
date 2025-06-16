@@ -7,29 +7,35 @@
 
 // Prototypes
 // ----------
-static bool canJump(void);
+static bool canJump(bool isAlive);
 // ----------
 
 Bird *NewBird(Vector2 screen) {
   static Bird newBird = {0};
-  newBird.birdSprite = LoadTexture(BIRD_IMG);
-
-  newBird.width = newBird.birdSprite.width;
-  newBird.height = newBird.birdSprite.height;
-
-  newBird.pos.x = (screen.x - newBird.width) / 2;
-  newBird.pos.y = (screen.y - newBird.height) / 2;
-
-  newBird.hitBox.width = newBird.width - 2 * HITBOX_LEEWAY;
-  newBird.hitBox.height = newBird.height - 2 * HITBOX_LEEWAY;
+  BirdReset(&newBird);
 
   return &newBird;
+}
+
+void BirdReset(Bird *bird) {
+  bird->birdSprite = LoadTexture(BIRD_IMG);
+
+  bird->width = bird->birdSprite.width;
+  bird->height = bird->birdSprite.height;
+
+  bird->pos.x = (V_SCREEN.x - bird->width) / 2;
+  bird->pos.y = (V_SCREEN.y - bird->height) / 2;
+
+  bird->hitBox.width = bird->width - 2 * HITBOX_LEEWAY;
+  bird->hitBox.height = bird->height - 2 * HITBOX_LEEWAY;
+
+  bird->isAlive = true;
 }
 
 void BirdUpdate(Bird *bird, float dt) {
   bird->dy += GRAVITY * dt;
 
-  if (canJump()) {
+  if (canJump(bird->isAlive)) {
     bird->dy -= JUMP_BURST;
   }
 
@@ -39,9 +45,13 @@ void BirdUpdate(Bird *bird, float dt) {
   bird->hitBox.y = bird->pos.y + HITBOX_LEEWAY;
 }
 
-static bool canJump(void) { return IsKeyPressed(KEY_SPACE); }
+static bool canJump(bool isAlive) {
+  if (!isAlive) {
+    return false;
+  }
+  return IsKeyPressed(KEY_SPACE);
+}
 
 void BirdDraw(Bird *bird) {
   DrawTexture(bird->birdSprite, bird->pos.x, bird->pos.y, WHITE);
-  // DrawTextureEx(bird->birdSprite, bird->pos, bird->rotation, 1.0f, WHITE);
 }

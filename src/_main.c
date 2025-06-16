@@ -1,31 +1,40 @@
 // Includes
 // --------
 #include "Assets_paths.h"
-#include "Bird.h"
 #include "Pipe.h"
-#include "PipePairManager.h"
 #include "Settings.h"
+#include "states/StatePlay.h"
+#include "states/StateTitle.h"
 #include <math.h>
 #include <raylib.h>
 #include <stdio.h>
 #include <time.h>
 // --------
 
+// Data types
+typedef enum {
+  TITLE,
+  COUNTDOWN,
+  PLAY,
+  SCORE,
+} GameState;
+
 // Prototypes
 // ----------
 // Init funcitons
 void GameInit(void);
 void LoadImages(void);
+void LoadFonts(void);
 
 // Run functions
 void GameRun(void);
 
+void GetInput(void);
+void ChangeCurrState(GameState state);
+
 void UpdateAll(float dt);
 void BGUpdate(float dt);
 void GroundUpdate(float dt);
-
-bool hasCollided(Bird *bird, PipePairNode *currentPipePairNode);
-void CurrPipePairNodeUpdate(void);
 
 void DrawAll(void);
 void DrawOnVScreen(void);
@@ -34,16 +43,22 @@ void DrawOnWindow(void);
 // Unload functions
 void GameUnload(void);
 void UnloadImages(void);
+void UnloadFonts(void);
+void UnloadSounds(void);
 // ----------
 
 // Varaiables
 // ----------
-float bgScroll = 0, groundScroll = 0;
+static float bgScroll = 0, groundScroll = 0;
 static RenderTexture2D vScreen;
 static Texture2D bgImg, groundImg;
-static Bird *bird;
-static PipePairQueue pipes;
-static PipePairNode *currPipePairNode;
+
+static Font smallFont, mediumFont, flappyFont, hugeFont;
+static int smallFontSize, mediumFontSize, flappyFontSize, hugeFontSize;
+
+static GameState currGameState;
+static void (*UpdateCurrState)(float dt);
+static void (*DrawCurrState)();
 // ----------
 
 // Let's have fun!
@@ -68,40 +83,90 @@ void GameInit(void) {
 
   // Load stuff
   LoadImages();
-  PipePairManagerInit();
+  LoadFonts();
 
-  bird = NewBird(V_SCREEN);
+  // Let us begin
+  ChangeCurrState(TITLE);
 }
 
 void LoadImages(void) {
   bgImg = LoadTexture(BG_IMG);
   groundImg = LoadTexture(GROUND_IMG);
 }
+
+void LoadFonts(void) {
+  smallFont = LoadFont("./assets/font.ttf");
+  smallFontSize = 8;
+
+  mediumFont = flappyFont = hugeFont = LoadFont("./assets/flappy.ttf");
+  mediumFontSize = 14;
+  flappyFontSize = 28;
+  hugeFontSize = 56;
+}
 // --------------
 
 // Run functions
 // -------------
-bool canPause = false;
 void GameRun(void) {
   while (!WindowShouldClose()) {
     float dt = GetFrameTime();
+    GetInput();
     UpdateAll(dt);
     DrawAll();
   }
 }
 
-void UpdateAll(float dt) {
-  if (!canPause) {
-    BGUpdate(dt);
-    GroundUpdate(dt);
-    PipePairsUpdate(&pipes, dt, V_SCREEN);
-    BirdUpdate(bird, dt);
-    CurrPipePairNodeUpdate();
-
-    if (hasCollided(bird, currPipePairNode)) {
-      canPause = true;
+void GetInput() {
+  switch (currGameState) {
+  case TITLE:
+    if (IsKeyPressed(KEY_SPACE)) {
+      ChangeCurrState(PLAY);
     }
+    break;
+  case COUNTDOWN:
+    break;
+  case PLAY:
+    break;
+  case SCORE:
+    break;
+  default:
+    break;
   }
+}
+
+void ChangeCurrState(GameState state) {
+  switch (state) {
+  case TITLE:
+    currGameState = TITLE;
+    puts("you're in title now");
+
+    StateTitleEnter();
+
+    DrawCurrState = StateTitleDraw;
+    UpdateCurrState = StateTitleUpdate;
+    break;
+  case COUNTDOWN:
+    break;
+  case PLAY:
+    currGameState = PLAY;
+    puts("you're in play now!");
+
+    StatePlayEnter(StateTitleExit());
+
+    DrawCurrState = StatePlayDraw;
+    UpdateCurrState = StatePlayUpdate;
+    break;
+  case SCORE:
+    break;
+  default:
+    break;
+  }
+}
+
+void UpdateAll(float dt) {
+  BGUpdate(dt);
+  UpdateCurrState(dt);
+  GroundUpdate(dt);
 }
 
 void BGUpdate(float dt) {
@@ -114,31 +179,6 @@ void GroundUpdate(float dt) {
   groundScroll = fmodf(groundScroll, GROUND_SCROLL_SPEED);
 }
 
-void CurrPipePairNodeUpdate(void) {
-  if (currPipePairNode == NULL) {
-    currPipePairNode = pipes.head;
-    return;
-  }
-
-  float currPipePairPos = currPipePairNode->pipePair->pos->x;
-  int currPipePairWidth = currPipePairNode->pipePair->width;
-  if (bird->pos.x > currPipePairPos + currPipePairWidth) {
-    currPipePairNode = currPipePairNode->next;
-  }
-}
-
-bool hasCollided(Bird *bird, PipePairNode *currentPipePairNode) {
-  if (currentPipePairNode == NULL) {
-    return false;
-  }
-
-  Rectangle bottomPipeHitBox = currentPipePairNode->pipePair->bottom->hitBox;
-  Rectangle topPipeHitBox = currentPipePairNode->pipePair->top->hitBox;
-
-  return CheckCollisionRecs(bird->hitBox, bottomPipeHitBox) ||
-         CheckCollisionRecs(bird->hitBox, topPipeHitBox);
-}
-
 void DrawAll(void) {
   DrawOnVScreen();
   DrawOnWindow();
@@ -148,12 +188,8 @@ void DrawOnVScreen(void) {
   BeginTextureMode(vScreen);
   ClearBackground(BLACK);
   DrawTexture(bgImg, bgScroll, 0, WHITE);
-  PipePairsDraw(&pipes);
+  DrawCurrState();
   DrawTexture(groundImg, groundScroll, V_SCREEN.y - groundImg.height, WHITE);
-  BirdDraw(bird);
-
-  DrawFPS(10, 10);
-
   EndTextureMode();
 }
 
@@ -168,12 +204,19 @@ void DrawOnWindow(void) {
 
 // Unload functions
 // ----------------
-void GameUnload(void) { UnloadImages(); }
+void GameUnload(void) {
+  UnloadImages();
+  UnloadFonts();
+  UnloadSounds();
+}
 
 void UnloadImages(void) {
   UnloadTexture(bgImg);
   UnloadTexture(groundImg);
-  PipePairsUnload(&pipes);
+  StatePlayExit();
   PipeUnloadSprite();
 }
+
+void UnloadFonts(void) {}
+void UnloadSounds(void) {}
 // ----------------
