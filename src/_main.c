@@ -4,6 +4,7 @@
 #include "Pipe.h"
 #include "Settings.h"
 #include "states/StatePlay.h"
+#include "states/StateScore.h"
 #include "states/StateTitle.h"
 #include <math.h>
 #include <raylib.h>
@@ -29,7 +30,7 @@ void LoadFonts(void);
 // Run functions
 void GameRun(void);
 
-void GetInput(void);
+void CheckGameState(void);
 void ChangeCurrState(GameState state);
 
 void UpdateAll(float dt);
@@ -49,16 +50,18 @@ void UnloadSounds(void);
 
 // Varaiables
 // ----------
+static Bird *bird;
+
 static float bgScroll = 0, groundScroll = 0;
 static RenderTexture2D vScreen;
 static Texture2D bgImg, groundImg;
 
-static Font smallFont, mediumFont, flappyFont, hugeFont;
-static int smallFontSize, mediumFontSize, flappyFontSize, hugeFontSize;
-
 static GameState currGameState;
-static void (*UpdateCurrState)(float dt);
-static void (*DrawCurrState)();
+static void (*CurrStateUpdate)(float dt);
+static void (*CurrStateDraw)();
+static void (*CurrStateExit)();
+
+Font smallFont, mediumFont, flappyFont, hugeFont;
 // ----------
 
 // Let's have fun!
@@ -74,8 +77,8 @@ int main(void) {
 // --------------
 void GameInit(void) {
   // Window congfig
-  SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT | FLAG_WINDOW_HIGHDPI);
-  InitWindow(window.x, window.y, "Fifty Bird");
+  SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT);
+  InitWindow(window.x, window.y, GAME_TITLE);
   vScreen = LoadRenderTexture(V_SCREEN.x, V_SCREEN.y);
   SetTargetFPS(TARGET_FPS);
 
@@ -84,6 +87,8 @@ void GameInit(void) {
   // Load stuff
   LoadImages();
   LoadFonts();
+
+  bird = NewBird(V_SCREEN);
 
   // Let us begin
   ChangeCurrState(TITLE);
@@ -95,13 +100,13 @@ void LoadImages(void) {
 }
 
 void LoadFonts(void) {
-  smallFont = LoadFont("./assets/font.ttf");
-  smallFontSize = 8;
+  smallFont = LoadFont(FONT_REGULAR);
+  mediumFont = hugeFont = flappyFont = LoadFont(FONT_FLAPPY);
 
-  mediumFont = flappyFont = hugeFont = LoadFont("./assets/flappy.ttf");
-  mediumFontSize = 14;
-  flappyFontSize = 28;
-  hugeFontSize = 56;
+  SetTextureFilter(smallFont.texture, TEXTURE_FILTER_POINT);
+  SetTextureFilter(mediumFont.texture, TEXTURE_FILTER_POINT);
+  SetTextureFilter(hugeFont.texture, TEXTURE_FILTER_POINT);
+  SetTextureFilter(flappyFont.texture, TEXTURE_FILTER_POINT);
 }
 // --------------
 
@@ -110,24 +115,30 @@ void LoadFonts(void) {
 void GameRun(void) {
   while (!WindowShouldClose()) {
     float dt = GetFrameTime();
-    GetInput();
+    CheckGameState();
     UpdateAll(dt);
     DrawAll();
   }
 }
 
-void GetInput() {
+void CheckGameState() {
   switch (currGameState) {
   case TITLE:
-    if (IsKeyPressed(KEY_SPACE)) {
+    if (IsKeyPressed(KEY_ENTER)) {
       ChangeCurrState(PLAY);
     }
     break;
   case COUNTDOWN:
     break;
   case PLAY:
+    if (!bird->isAlive) {
+      ChangeCurrState(SCORE);
+    }
     break;
   case SCORE:
+    if (IsKeyPressed(KEY_ENTER)) {
+      ChangeCurrState(PLAY);
+    }
     break;
   default:
     break;
@@ -138,25 +149,34 @@ void ChangeCurrState(GameState state) {
   switch (state) {
   case TITLE:
     currGameState = TITLE;
-    puts("you're in title now");
 
-    StateTitleEnter();
+    StateTitleEnter(bird);
 
-    DrawCurrState = StateTitleDraw;
-    UpdateCurrState = StateTitleUpdate;
+    CurrStateDraw = StateTitleDraw;
+    CurrStateUpdate = StateTitleUpdate;
+    CurrStateExit = StateTitleExit;
     break;
   case COUNTDOWN:
     break;
   case PLAY:
+    CurrStateExit();
     currGameState = PLAY;
-    puts("you're in play now!");
 
-    StatePlayEnter(StateTitleExit());
+    StatePlayEnter(bird);
 
-    DrawCurrState = StatePlayDraw;
-    UpdateCurrState = StatePlayUpdate;
+    CurrStateDraw = StatePlayDraw;
+    CurrStateUpdate = StatePlayUpdate;
+    CurrStateExit = StatePlayExit;
     break;
   case SCORE:
+    CurrStateExit();
+    currGameState = SCORE;
+
+    StateScoreEnter(bird);
+
+    CurrStateDraw = StateScoreDraw;
+    CurrStateUpdate = StateScoreUpdate;
+    CurrStateExit = StateScoreExit;
     break;
   default:
     break;
@@ -165,7 +185,7 @@ void ChangeCurrState(GameState state) {
 
 void UpdateAll(float dt) {
   BGUpdate(dt);
-  UpdateCurrState(dt);
+  CurrStateUpdate(dt);
   GroundUpdate(dt);
 }
 
@@ -188,7 +208,7 @@ void DrawOnVScreen(void) {
   BeginTextureMode(vScreen);
   ClearBackground(BLACK);
   DrawTexture(bgImg, bgScroll, 0, WHITE);
-  DrawCurrState();
+  CurrStateDraw();
   DrawTexture(groundImg, groundScroll, V_SCREEN.y - groundImg.height, WHITE);
   EndTextureMode();
 }
@@ -217,6 +237,10 @@ void UnloadImages(void) {
   PipeUnloadSprite();
 }
 
-void UnloadFonts(void) {}
+void UnloadFonts(void) {
+  UnloadFont(smallFont);
+  UnloadFont(flappyFont);
+}
+
 void UnloadSounds(void) {}
 // ----------------

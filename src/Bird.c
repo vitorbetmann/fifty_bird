@@ -30,6 +30,8 @@ void BirdReset(Bird *bird) {
   bird->hitBox.height = bird->height - 2 * HITBOX_LEEWAY;
 
   bird->isAlive = true;
+  bird->score = 0;
+  bird->dy = 0;
 }
 
 void BirdUpdate(Bird *bird, float dt) {
@@ -43,6 +45,10 @@ void BirdUpdate(Bird *bird, float dt) {
 
   bird->hitBox.x = bird->pos.x + HITBOX_LEEWAY;
   bird->hitBox.y = bird->pos.y + HITBOX_LEEWAY;
+
+  if (bird->pos.y + bird->hitBox.height > V_SCREEN.y - 16) {
+    bird->isAlive = false;
+  }
 }
 
 static bool canJump(bool isAlive) {

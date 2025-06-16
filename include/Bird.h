@@ -16,6 +16,7 @@ typedef struct {
   float dy, rotation;
   Rectangle hitBox;
   bool isAlive;
+  int score;
 } Bird;
 
 // ----------

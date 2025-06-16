@@ -18,6 +18,7 @@ static void PipePairsUnloadNode(PipePairNode *pipePairNode);
 // ---------
 static float spawnTimer;
 static float gapLastY;
+static bool playerCanScore;
 // ---------
 
 void PipePairManagerInit(void) {

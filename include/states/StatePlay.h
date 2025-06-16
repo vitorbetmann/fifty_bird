@@ -9,7 +9,7 @@
 // --------
 // Prototypes
 // ----------
-void StatePlayEnter(Bird *playerBird);
+void StatePlayEnter(Bird *player);
 void StatePlayUpdate(float dt);
 void StatePlayDraw(void);
 void StatePlayExit(void);

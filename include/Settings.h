@@ -3,11 +3,20 @@
 
 #include "raylib.h"
 
-// Technical Stuff
+// Title
+extern const char *const GAME_TITLE;
+
+// Window
 extern Vector2 window;
 extern const Vector2 V_SCREEN;
-extern const int BG_LOOPING_POINT, GROUND_LOOPING_POINT;
 extern const int TARGET_FPS;
+
+// Fonts
+extern Font smallFont, mediumFont, flappyFont, hugeFont;
+extern const int SMALL_FONT_SIZE;
+extern const int MEDIUM_FONT_SIZE;
+extern const int HUGE_FONT_SIZE;
+extern const int FLAPPY_FONT_SIZE;
 
 // Bird
 extern const int GRAVITY;
@@ -20,10 +29,10 @@ extern const int PIPE_TOP_MARGIN;
 extern const int PIPE_BOTTOM_MARGIN;
 extern const int PIPE_SHIFT;
 extern const int SPAWN_TIME;
+extern const int PIPE_SCORE;
 
 // Scenery
-extern const float BG_SCROLL_SPEED;
-extern const float GROUND_SCROLL_SPEED;
-extern const float PIPE_SCROLL_SPEED;
+extern const int BG_LOOPING_POINT, GROUND_LOOPING_POINT;
+extern const float BG_SCROLL_SPEED, GROUND_SCROLL_SPEED, PIPE_SCROLL_SPEED;
 
 #endif

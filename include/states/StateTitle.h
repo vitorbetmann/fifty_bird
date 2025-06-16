@@ -8,10 +8,10 @@
 
 // Prototypes
 // ----------
-void StateTitleEnter(void);
+void StateTitleEnter(Bird *player);
 void StateTitleUpdate(float dt);
 void StateTitleDraw(void);
-Bird *StateTitleExit(void);
+void StateTitleExit(void);
 // ----------
 
 #endif

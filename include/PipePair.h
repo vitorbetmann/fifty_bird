@@ -11,6 +11,7 @@ typedef struct {
   Pipe *bottom;
   int width;
   Vector2 *pos;
+  int score;
 } PipePair;
 
 // Prototypes
