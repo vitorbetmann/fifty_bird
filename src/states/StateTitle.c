@@ -9,12 +9,10 @@
 // Variables
 // ---------
 static const char PROMPT[] = "Press Enter";
-static Bird *bird;
 // ---------
 
-void StateTitleEnter(Bird *player) {
-  bird = player;
-  //
+void StateTitleEnter() {
+  // Nothing to do
 }
 
 void StateTitleUpdate(float dt) {
@@ -31,7 +29,7 @@ void StateTitleDraw(void) {
   textX = (V_SCREEN.x - textWidth) / 2.0;
   DrawTextEx(mediumFont, PROMPT, (Vector2){textX, 100}, MEDIUM_FONT_SIZE, 1,
              WHITE);
-  BirdDraw(bird);
+  BirdDraw(gBird);
 }
 
 void StateTitleExit(void) {

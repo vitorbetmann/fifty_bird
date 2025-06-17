@@ -65,4 +65,6 @@ void PipeDraw(Pipe *pipe) {
   }
 }
 
+void PipeUnload(Pipe *pipe) { free(pipe); }
+
 void PipeUnloadSprite() { UnloadTexture(PIPE_SPRITE); }

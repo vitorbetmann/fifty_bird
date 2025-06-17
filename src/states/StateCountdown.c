@@ -7,34 +7,24 @@
 
 // Variables
 // ---------
-static Bird *bird;
 static const float COUNTDOWN_TIME = 0.75;
-static int count;
 static float timer;
 // ---------
 
-void StateCountdownEnter(Bird *player) {
-  bird = player;
-  count = 3;
-  timer = 0.0f;
-  BirdReset(bird);
+void StateCountdownEnter() {
+  BirdReset(gBird);
+  timer = 3.4f;
 }
 
-void StateCountdownUpdate(float dt) {
-  timer += dt;
-  if (timer > COUNTDOWN_TIME) {
-    timer = fmodf(timer, COUNTDOWN_TIME);
-    count--;
-  }
-}
+void StateCountdownUpdate(float dt) { timer -= 1.25 * dt; }
 
-bool IsTimerOver(void) { return count == 0; }
+bool IsTimerOver(void) { return timer < 1; }
 
 void StateCountdownDraw(void) {
-  BirdDraw(bird);
+  BirdDraw(gBird);
 
   char buffer[sizeof(char) + 1];
-  snprintf(buffer, sizeof(buffer), "%d", count);
+  snprintf(buffer, sizeof(buffer), "%d", (int)(roundf)(timer));
   int textWidth = MeasureText(buffer, HUGE_FONT_SIZE);
   float textX = (V_SCREEN.x - textWidth) / 2.0;
   DrawTextEx(hugeFont, buffer, (Vector2){textX, 80}, HUGE_FONT_SIZE, 1, WHITE);

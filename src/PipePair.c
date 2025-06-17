@@ -33,6 +33,7 @@ void PipePairDraw(PipePair *pipePair) {
 }
 
 void PipePairUnload(PipePair *pipePair) {
-  free(pipePair->bottom);
-  free(pipePair->top);
+  PipeUnload(pipePair->bottom);
+  PipeUnload(pipePair->top);
+  free(pipePair);
 }

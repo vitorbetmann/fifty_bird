@@ -15,7 +15,7 @@ static const char SCORE_MSG[] = "Score: ";
 static int score;
 // ---------
 
-void StateScoreEnter(Bird *player) { score = player->score; }
+void StateScoreEnter() { score = gBird->score; }
 
 void StateScoreUpdate(float dt) {
   // Do nothing

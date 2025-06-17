@@ -1,6 +1,7 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
+#include "Bird.h"
 #include "raylib.h"
 
 // Title
@@ -29,6 +30,7 @@ extern bool (*HasValidInput)(int value);
 extern int input1, input2;
 
 // Bird
+extern Bird *gBird;
 extern const int GRAVITY;
 extern const int JUMP_BURST;
 extern const int HITBOX_LEEWAY;

@@ -19,7 +19,8 @@ typedef struct {
 Pipe *NewPipe(Vector2 screen, Orientation orientation);
 void PipeUpdate(Pipe *pipe, float dt);
 void PipeDraw(Pipe *pipe);
-void PipeUnloadSprite();
+void PipeUnload(Pipe *pipe);
+void PipeUnloadSprite(void);
 // ----------
 
 #endif

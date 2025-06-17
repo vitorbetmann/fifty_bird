@@ -26,5 +26,6 @@ Bird *NewBird(Vector2 screen);
 void BirdReset(Bird *bird);
 void BirdUpdate(Bird *bird, float dt);
 void BirdDraw(Bird *bird);
+void BirdUnloadSprite(void);
 
 #endif

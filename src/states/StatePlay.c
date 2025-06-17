@@ -13,32 +13,28 @@ static bool HasCollided(Bird *bird, PipePair *pipePair);
 
 // Variables
 // ---------
-static Bird *bird;
 static PipePairQueue pipes;
 static PipePairNode *currPipePairNode;
 // ---------
 
-void StatePlayEnter(Bird *player) {
-  PipePairManagerInit();
-  bird = player;
-}
+void StatePlayEnter() { PipePairManagerInit(); }
 
 void StatePlayUpdate(float dt) {
   PipePairsUpdate(&pipes, dt, V_SCREEN);
-  BirdUpdate(bird, dt);
+  BirdUpdate(gBird, dt);
   CurrPipePairNodeUpdate();
 
   if (currPipePairNode != NULL) {
-    if (HasCollided(bird, currPipePairNode->pipePair)) {
-      bird->isAlive = false;
+    if (HasCollided(gBird, currPipePairNode->pipePair)) {
+      gBird->isAlive = false;
     }
   }
 
-  if (bird->pos.y + bird->hitBox.height > V_SCREEN.y - 16) {
-    bird->isAlive = false;
+  if (gBird->pos.y + gBird->hitBox.height > V_SCREEN.y - 16) {
+    gBird->isAlive = false;
   }
 
-  if (!bird->isAlive) {
+  if (!gBird->isAlive) {
     PlaySound(explosionSound);
     PlaySound(hurtSound);
   }
@@ -52,8 +48,8 @@ void CurrPipePairNodeUpdate(void) {
 
   float currPipePairPos = currPipePairNode->pipePair->pos->x;
   int currPipePairWidth = currPipePairNode->pipePair->width;
-  if (bird->pos.x > currPipePairPos + currPipePairWidth) {
-    bird->score++;
+  if (gBird->pos.x > currPipePairPos + currPipePairWidth) {
+    gBird->score++;
     PlaySound(scoreSound);
     currPipePairNode = currPipePairNode->next;
   }
@@ -66,10 +62,10 @@ bool HasCollided(Bird *bird, PipePair *pipePair) {
 
 void StatePlayDraw(void) {
   PipePairsDraw(&pipes);
-  BirdDraw(bird);
+  BirdDraw(gBird);
 
   char buffer[32];
-  snprintf(buffer, sizeof(buffer), "Score: %d", bird->score);
+  snprintf(buffer, sizeof(buffer), "Score: %d", gBird->score);
   DrawTextEx(flappyFont, buffer, (Vector2){8, 8}, FLAPPY_FONT_SIZE, 1, WHITE);
 }
 

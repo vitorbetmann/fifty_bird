@@ -1,6 +1,7 @@
 // Includes
 // --------
 #include "Assets_paths.h"
+#include "Bird.h"
 #include "Pipe.h"
 #include "Settings.h"
 #include "states/StateCountdown.h"
@@ -53,7 +54,7 @@ void UnloadMusicAndSounds(void);
 
 // Varaiables
 // ----------
-static Bird *bird;
+Bird *gBird;
 
 static float bgScroll = 0, groundScroll = 0;
 static RenderTexture2D vScreen;
@@ -102,7 +103,7 @@ void GameInit(void) {
   // Game specifics
   PlayMusicStream(music);
   SetRandomSeed(time(NULL));
-  bird = NewBird(V_SCREEN);
+  gBird = NewBird(V_SCREEN);
 
   // Let us begin
   ChangeCurrState(TITLE);
@@ -166,7 +167,7 @@ void CheckGameState(void) {
     }
     break;
   case PLAY:
-    if (!bird->isAlive) {
+    if (!gBird->isAlive) {
       ChangeCurrState(SCORE);
     }
     break;
@@ -174,8 +175,6 @@ void CheckGameState(void) {
     if (HasValidInput(input2)) {
       ChangeCurrState(COUNTDOWN);
     }
-    break;
-  default:
     break;
   }
 }
@@ -185,7 +184,7 @@ void ChangeCurrState(GameState state) {
   case TITLE:
     currGameState = TITLE;
 
-    StateTitleEnter(bird);
+    StateTitleEnter();
 
     CurrStateDraw = StateTitleDraw;
     CurrStateUpdate = StateTitleUpdate;
@@ -195,7 +194,7 @@ void ChangeCurrState(GameState state) {
     CurrStateExit();
     currGameState = COUNTDOWN;
 
-    StateCountdownEnter(bird);
+    StateCountdownEnter();
 
     CurrStateDraw = StateCountdownDraw;
     CurrStateUpdate = StateCountdownUpdate;
@@ -205,7 +204,7 @@ void ChangeCurrState(GameState state) {
     CurrStateExit();
     currGameState = PLAY;
 
-    StatePlayEnter(bird);
+    StatePlayEnter();
 
     CurrStateDraw = StatePlayDraw;
     CurrStateUpdate = StatePlayUpdate;
@@ -215,13 +214,11 @@ void ChangeCurrState(GameState state) {
     CurrStateExit();
     currGameState = SCORE;
 
-    StateScoreEnter(bird);
+    StateScoreEnter();
 
     CurrStateDraw = StateScoreDraw;
     CurrStateUpdate = StateScoreUpdate;
     CurrStateExit = StateScoreExit;
-    break;
-  default:
     break;
   }
 }
@@ -269,6 +266,7 @@ void DrawOnWindow(void) {
 // Unload functions
 // ----------------
 void GameUnload(void) {
+  CurrStateExit();
   UnloadImages();
   UnloadFonts();
   UnloadMusicAndSounds();
@@ -277,7 +275,7 @@ void GameUnload(void) {
 void UnloadImages(void) {
   UnloadTexture(bgImg);
   UnloadTexture(groundImg);
-  StatePlayExit();
+  BirdUnloadSprite();
   PipeUnloadSprite();
 }
 

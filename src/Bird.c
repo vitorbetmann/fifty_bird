@@ -1,5 +1,3 @@
-// TODO add rotation to Bird
-
 #include "Bird.h"
 #include "Assets_paths.h"
 #include "Settings.h"
@@ -58,3 +56,5 @@ static bool canJump(bool isAlive) {
 void BirdDraw(Bird *bird) {
   DrawTexture(bird->birdSprite, bird->pos.x, bird->pos.y, WHITE);
 }
+
+void BirdUnloadSprite(void) { UnloadTexture(gBird->birdSprite); }
