@@ -1,0 +1,18 @@
+#ifndef STATE_COUNTDOWN_H
+#define STATE_COUNTDOWN_H
+
+// Includes
+// --------
+#include "stateMachine/StateMachine.h"
+
+// Prototypes
+// ----------
+void StateCountdownEnter(void *args);
+void StateCountdownUpdate(float dt);
+void StateCountdownDraw(void);
+
+// Variables
+// ---------
+extern State stateCountdown;
+
+#endif

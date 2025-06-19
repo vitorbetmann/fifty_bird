@@ -5,6 +5,10 @@ const char *const BIRD_IMG = "./assets/bird.png";
 const char *const BG_IMG = "./assets/background.png";
 const char *const GROUND_IMG = "./assets/ground.png";
 const char *const PIPE_IMG = "./assets/pipe.png";
+const char *const PAUSE_ICON = "./assets/pause_icon.png";
+const char *const MEDAL_GOLD = "./assets/medal_gold.png";
+const char *const MEDAL_SILVER = "./assets/medal_silver.png";
+const char *const MEDAL_BRONZE = "./assets/medal_bronze.png";
 
 // Fonts
 const char *const FONT_REGULAR = "./assets/font.ttf";

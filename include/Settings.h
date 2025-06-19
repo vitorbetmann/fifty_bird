@@ -36,15 +36,19 @@ extern const int JUMP_BURST;
 extern const int HITBOX_LEEWAY;
 
 // Pipes
-extern const int PIPE_GAP;
+extern const int LARGEST_PIPE_GAP;
 extern const int PIPE_TOP_MARGIN;
 extern const int PIPE_BOTTOM_MARGIN;
 extern const int PIPE_SHIFT;
-extern const int SPAWN_TIME;
 extern const int PIPE_SCORE;
 
 // Scenery
 extern const int BG_LOOPING_POINT, GROUND_LOOPING_POINT;
 extern const float BG_SCROLL_SPEED, GROUND_SCROLL_SPEED, PIPE_SCROLL_SPEED;
+
+// Scoring
+extern const int BRONZE_THRESHOLD;
+extern const int SILVER_THRESHOLD;
+extern const int GOLD_THRESHOLD;
 
 #endif

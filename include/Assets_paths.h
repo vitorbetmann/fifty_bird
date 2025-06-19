@@ -6,6 +6,10 @@ extern const char *const BIRD_IMG;
 extern const char *const BG_IMG;
 extern const char *const GROUND_IMG;
 extern const char *const PIPE_IMG;
+extern const char *const PAUSE_ICON;
+extern const char *const MEDAL_GOLD;
+extern const char *const MEDAL_SILVER;
+extern const char *const MEDAL_BRONZE;
 
 // Fonts
 extern const char *const FONT_REGULAR;

@@ -4,23 +4,15 @@
 #include "Bird.h"
 #include "Pipe.h"
 #include "Settings.h"
-#include "states/StateCountdown.h"
-#include "states/StatePlay.h"
-#include "states/StateScore.h"
-#include "states/StateTitle.h"
+#include "stateMachine/StateMachine.h"
+#include "stateMachine/states/StatePlay.h"
+#include "stateMachine/states/StateScore.h"
+#include "stateMachine/states/StateTitle.h"
 #include <math.h>
 #include <raylib.h>
 #include <stdio.h>
 #include <time.h>
 // --------
-
-// Data types
-typedef enum {
-  TITLE,
-  COUNTDOWN,
-  PLAY,
-  SCORE,
-} GameState;
 
 // Prototypes
 // ----------
@@ -33,9 +25,6 @@ void LoadSounds(void);
 
 // Run functions
 void GameRun(void);
-
-void CheckGameState(void);
-void ChangeCurrState(GameState state);
 
 void UpdateAll(float dt);
 void BGUpdate(float dt);
@@ -60,7 +49,6 @@ static float bgScroll = 0, groundScroll = 0;
 static RenderTexture2D vScreen;
 static Texture2D bgImg, groundImg;
 
-static GameState currGameState;
 static void (*CurrStateUpdate)(float dt);
 static void (*CurrStateDraw)();
 static void (*CurrStateExit)();
@@ -106,7 +94,7 @@ void GameInit(void) {
   gBird = NewBird(V_SCREEN);
 
   // Let us begin
-  ChangeCurrState(TITLE);
+  SMChangeState(&stateTitle, NULL);
 
   // Pick input type
   HasValidInput = IsKeyPressed;
@@ -121,6 +109,10 @@ void GameInit(void) {
 void LoadImages(void) {
   bgImg = LoadTexture(BG_IMG);
   groundImg = LoadTexture(GROUND_IMG);
+  pauseImg = LoadTexture(PAUSE_ICON);
+  medalGoldImg = LoadTexture(MEDAL_GOLD);
+  medalSilverImg = LoadTexture(MEDAL_SILVER);
+  medalBronzeImg = LoadTexture(MEDAL_BRONZE);
 }
 
 void LoadFonts(void) {
@@ -148,84 +140,14 @@ void LoadSounds(void) {
 void GameRun(void) {
   while (!WindowShouldClose()) {
     float dt = GetFrameTime();
-    CheckGameState();
     UpdateAll(dt);
     DrawAll();
   }
 }
 
-void CheckGameState(void) {
-  switch (currGameState) {
-  case TITLE:
-    if (HasValidInput(input2)) {
-      ChangeCurrState(COUNTDOWN);
-    }
-    break;
-  case COUNTDOWN:
-    if (IsTimerOver()) {
-      ChangeCurrState(PLAY);
-    }
-    break;
-  case PLAY:
-    if (!gBird->isAlive) {
-      ChangeCurrState(SCORE);
-    }
-    break;
-  case SCORE:
-    if (HasValidInput(input2)) {
-      ChangeCurrState(COUNTDOWN);
-    }
-    break;
-  }
-}
-
-void ChangeCurrState(GameState state) {
-  switch (state) {
-  case TITLE:
-    currGameState = TITLE;
-
-    StateTitleEnter();
-
-    CurrStateDraw = StateTitleDraw;
-    CurrStateUpdate = StateTitleUpdate;
-    CurrStateExit = StateTitleExit;
-    break;
-  case COUNTDOWN:
-    CurrStateExit();
-    currGameState = COUNTDOWN;
-
-    StateCountdownEnter();
-
-    CurrStateDraw = StateCountdownDraw;
-    CurrStateUpdate = StateCountdownUpdate;
-    CurrStateExit = StateCountdownExit;
-    break;
-  case PLAY:
-    CurrStateExit();
-    currGameState = PLAY;
-
-    StatePlayEnter();
-
-    CurrStateDraw = StatePlayDraw;
-    CurrStateUpdate = StatePlayUpdate;
-    CurrStateExit = StatePlayExit;
-    break;
-  case SCORE:
-    CurrStateExit();
-    currGameState = SCORE;
-
-    StateScoreEnter();
-
-    CurrStateDraw = StateScoreDraw;
-    CurrStateUpdate = StateScoreUpdate;
-    CurrStateExit = StateScoreExit;
-    break;
-  }
-}
-
 void UpdateAll(float dt) {
   BGUpdate(dt);
-  CurrStateUpdate(dt);
+  currState->Update(dt);
   GroundUpdate(dt);
   UpdateMusicStream(music);
 }
@@ -249,7 +171,7 @@ void DrawOnVScreen(void) {
   BeginTextureMode(vScreen);
   ClearBackground(BLACK);
   DrawTexture(bgImg, bgScroll, 0, WHITE);
-  CurrStateDraw();
+  currState->Draw();
   DrawTexture(groundImg, groundScroll, V_SCREEN.y - groundImg.height, WHITE);
   EndTextureMode();
 }
@@ -275,6 +197,12 @@ void GameUnload(void) {
 void UnloadImages(void) {
   UnloadTexture(bgImg);
   UnloadTexture(groundImg);
+  UnloadTexture(pauseImg);
+
+  UnloadTexture(medalGoldImg);
+  UnloadTexture(medalSilverImg);
+  UnloadTexture(medalBronzeImg);
+
   BirdUnloadSprite();
   PipeUnloadSprite();
 }

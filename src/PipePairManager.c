@@ -17,6 +17,8 @@ static void PipePairsUnloadNode(PipePairNode *pipePairNode);
 // Variables
 // ---------
 static float spawnTimer;
+static float spawnTime[] = {1.5f, 2.0f, 2.5f};
+static int index = 1;
 static float gapLastY;
 static bool playerCanScore;
 // ---------
@@ -24,7 +26,7 @@ static bool playerCanScore;
 void PipePairManagerInit(void) {
   spawnTimer = 0.0f;
   gapLastY = GetRandomValue(PIPE_TOP_MARGIN,
-                            V_SCREEN.y - PIPE_GAP - PIPE_BOTTOM_MARGIN);
+                            V_SCREEN.y - LARGEST_PIPE_GAP - PIPE_BOTTOM_MARGIN);
 }
 
 static void PipesEnqueue(PipePair *pipePair, PipePairQueue *pipePairs) {
@@ -79,8 +81,9 @@ void PipePairsUpdate(PipePairQueue *pipePairs, float dt, Vector2 screen) {
 
 static bool CanGeneratePipePair(float dt) {
   spawnTimer += dt;
-  if (spawnTimer > SPAWN_TIME) {
+  if (spawnTimer > spawnTime[index]) {
     spawnTimer = 0.0f;
+    index = GetRandomValue(0, 2);
     return true;
   }
   return false;
@@ -89,7 +92,7 @@ static bool CanGeneratePipePair(float dt) {
 static void UpdateLastGapY(void) {
   gapLastY += GetRandomValue(-PIPE_SHIFT, PIPE_SHIFT);
   gapLastY = Clamp(gapLastY, PIPE_TOP_MARGIN,
-                   V_SCREEN.y - PIPE_GAP - PIPE_BOTTOM_MARGIN);
+                   V_SCREEN.y - LARGEST_PIPE_GAP - PIPE_BOTTOM_MARGIN);
 }
 
 void PipePairsDraw(PipePairQueue *pipes) {

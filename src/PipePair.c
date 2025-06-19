@@ -5,14 +5,17 @@
 #include <stdlib.h>
 
 const int PIPE_HEIGHT = 288;
+static int pipeGap[] = {70, 90, 110};
 
 PipePair *NewPipePair(Vector2 gapPos) {
   PipePair *newPipePair = malloc(sizeof(PipePair));
+  int index = GetRandomValue(0, 2);
 
   newPipePair->top = NewPipe((Vector2){gapPos.x, gapPos.y - PIPE_HEIGHT}, TOP);
-  newPipePair->bottom = NewPipe(
-      (Vector2){gapPos.x, newPipePair->top->pos.y + PIPE_HEIGHT + PIPE_GAP},
-      BOTTOM);
+  newPipePair->bottom =
+      NewPipe((Vector2){gapPos.x,
+                        newPipePair->top->pos.y + PIPE_HEIGHT + pipeGap[index]},
+              BOTTOM);
 
   newPipePair->width = newPipePair->bottom->width;
   newPipePair->pos = &newPipePair->bottom->pos;
