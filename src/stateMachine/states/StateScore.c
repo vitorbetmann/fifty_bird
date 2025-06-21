@@ -1,6 +1,7 @@
 #include "stateMachine/states/StateScore.h"
 #include "Settings.h"
 #include "raylib.h"
+#include "smile.h"
 #include "stateMachine/StateMachine.h"
 #include "stateMachine/states/StateCountdown.h"
 #include "stateMachine/states/StatePlay.h"
@@ -10,10 +11,11 @@
 
 // Data types
 // ----------
-State stateScore = {.Enter = StateScoreEnter,
-                    .Update = StateScoreUpdate,
-                    .Draw = StateScoreDraw,
-                    .Exit = NULL};
+State stateScore = {.id = "score",
+                    .enter = StateScoreEnter,
+                    .update = StateScoreUpdate,
+                    .draw = StateScoreDraw,
+                    .exit = NULL};
 
 typedef enum {
   BRONZE = 5,
@@ -54,7 +56,7 @@ void StateScoreEnter(void *args) {
 
 void StateScoreUpdate(float dt) {
   if (HasValidInput(input2)) {
-    SMChangeState(&stateCountdown, NULL);
+    sm_change_state(&stateCountdown, NULL);
   }
 }
 

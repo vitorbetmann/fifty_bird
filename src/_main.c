@@ -1,5 +1,6 @@
 // Includes
 // --------
+#include "../smile_engine/include/smile.h"
 #include "Assets_paths.h"
 #include "Bird.h"
 #include "Pipe.h"
@@ -7,7 +8,6 @@
 #include "stateMachine/StateMachine.h"
 #include "stateMachine/states/StatePlay.h"
 #include "stateMachine/states/StateScore.h"
-#include "stateMachine/states/StateTitle.h"
 #include <math.h>
 #include <raylib.h>
 #include <stdio.h>
@@ -43,6 +43,8 @@ void UnloadMusicAndSounds(void);
 
 // Varaiables
 // ----------
+extern State stateTitle;
+
 Bird *gBird;
 
 static float bgScroll = 0, groundScroll = 0;
@@ -94,7 +96,7 @@ void GameInit(void) {
   gBird = NewBird(V_SCREEN);
 
   // Let us begin
-  SMChangeState(&stateTitle, NULL);
+  sm_change_state(&stateTitle, NULL);
 
   // Pick input type
   HasValidInput = IsKeyPressed;
@@ -147,7 +149,7 @@ void GameRun(void) {
 
 void UpdateAll(float dt) {
   BGUpdate(dt);
-  currState->Update(dt);
+  sm_update(dt);
   GroundUpdate(dt);
   UpdateMusicStream(music);
 }
@@ -171,7 +173,7 @@ void DrawOnVScreen(void) {
   BeginTextureMode(vScreen);
   ClearBackground(BLACK);
   DrawTexture(bgImg, bgScroll, 0, WHITE);
-  currState->Draw();
+  sm_draw();
   DrawTexture(groundImg, groundScroll, V_SCREEN.y - groundImg.height, WHITE);
   EndTextureMode();
 }

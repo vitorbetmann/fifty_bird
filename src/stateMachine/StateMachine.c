@@ -1,21 +1,21 @@
-#include "stateMachine/StateMachine.h"
-#include <stdlib.h>
+// #include "stateMachine/StateMachine.h"
+// #include <stdlib.h>
 
-// Data types
-// ----------
+// // Data types
+// // ----------
 
-// Variables
-// ---------
-State *currState;
+// // Variables
+// // ---------
+// State *currState;
 
-void SMChangeState(State *state, void *args) {
-  if (currState && currState->Exit) {
-    currState->Exit();
-  }
+// void SMChangeState(State *state, void *args) {
+//   if (currState && currState->Exit) {
+//     currState->Exit();
+//   }
 
-  currState = state;
+//   currState = state;
 
-  if (currState && currState->Enter) {
-    currState->Enter(args);
-  }
-}
+//   if (currState && currState->Enter) {
+//     currState->Enter(args);
+//   }
+// }

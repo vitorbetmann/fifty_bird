@@ -2,16 +2,18 @@
 #include "Bird.h"
 #include "Settings.h"
 #include "raylib.h"
+#include "smile.h"
 #include "stateMachine/StateMachine.h"
 #include "stateMachine/states/StatePlay.h"
 #include <stdio.h>
 
 // Data types
 // ----------
-State stateCountdown = {.Enter = StateCountdownEnter,
-                        .Update = StateCountdownUpdate,
-                        .Draw = StateCountdownDraw,
-                        .Exit = NULL};
+State stateCountdown = {.id = "countdown",
+                        .enter = StateCountdownEnter,
+                        .update = StateCountdownUpdate,
+                        .draw = StateCountdownDraw,
+                        .exit = NULL};
 
 // Prototypes
 // ----------
@@ -33,7 +35,7 @@ void StateCountdownUpdate(float dt) {
   timer -= 1.25 * dt;
 
   if (IsTimerOver()) {
-    SMChangeState(&statePlay, NULL);
+    sm_change_state(&statePlay, NULL);
   }
 }
 

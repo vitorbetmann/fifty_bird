@@ -31,6 +31,7 @@ if(EMSCRIPTEN)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}
         -s USE_GLFW=3
         -s ASSERTIONS=1
+        -s ALLOW_MEMORY_GROWTH=1
         -s WASM=1
         -s ASYNCIFY
         -s GL_ENABLE_GET_PROC_ADDRESS=1
@@ -54,3 +55,12 @@ endif()
 target_include_directories(${PROJECT_NAME} PRIVATE "${RAYLIB_SRC_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/include")
 target_link_directories(${PROJECT_NAME} PRIVATE "${RAYLIB_LIB_PATH}")
 target_link_libraries(${PROJECT_NAME} PRIVATE "raylib")
+
+
+# Include the SMILE headers
+target_include_directories(${PROJECT_NAME} PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/smile_engine/include
+)
+
+# Link with the SMILE static library
+target_link_libraries(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/smile_engine/build/libsmile.a)

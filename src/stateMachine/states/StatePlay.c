@@ -2,16 +2,18 @@
 #include "PipePairManager.h"
 #include "Settings.h"
 #include "raylib.h"
+#include "smile.h"
 #include "stateMachine/states/StateScore.h"
 #include <stdio.h>
 #include <stdlib.h>
 
 // Data Types
 // ----------
-State statePlay = {.Enter = StatePlayEnter,
-                   .Update = StatePlayUpdate,
-                   .Draw = StatePlayDraw,
-                   .Exit = StatePlayExit};
+State statePlay = {.id = "play",
+                   .enter = StatePlayEnter,
+                   .update = StatePlayUpdate,
+                   .draw = StatePlayDraw,
+                   .exit = StatePlayExit};
 
 static ScoreArgs scoreArgs;
 
@@ -54,7 +56,7 @@ void StatePlayUpdate(float dt) {
     if (!gBird->isAlive) {
       PlaySound(explosionSound);
       PlaySound(hurtSound);
-      SMChangeState(&stateScore, &scoreArgs);
+      sm_change_state(&stateScore, &scoreArgs);
     }
 
     if (IsKeyPressed(KEY_P)) {

@@ -3,16 +3,17 @@
 #include "stateMachine/states/StateTitle.h"
 #include "Settings.h"
 #include "raylib.h"
+#include "smile.h"
 #include "stateMachine/states/StateCountdown.h"
 #include <stdlib.h>
 // --------
 
 // Data Types
 // ----------
-State stateTitle = {.Enter = NULL,
-                    .Update = StateTitleUpdate,
-                    .Draw = StateTitleDraw,
-                    .Exit = NULL};
+State stateTitle = {.enter = NULL,
+                    .update = StateTitleUpdate,
+                    .draw = StateTitleDraw,
+                    .exit = NULL};
 
 // Variables
 // ---------
@@ -21,7 +22,7 @@ static const char PROMPT[] = "Press Enter";
 
 void StateTitleUpdate(float dt) {
   if (HasValidInput(input2)) {
-    SMChangeState(&stateCountdown, NULL);
+    sm_change_state(&stateCountdown, NULL);
   }
 }
 

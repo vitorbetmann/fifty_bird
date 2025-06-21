@@ -3,7 +3,8 @@
 
 // Includes
 // --------
-#include "stateMachine/StateMachine.h"
+// #include "stateMachine/StateMachine.h"
+#include "../../smile_engine/include/smile.h"
 #include <raylib.h>
 
 // Prototypes
